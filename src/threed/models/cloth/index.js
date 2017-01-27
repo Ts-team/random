@@ -34,8 +34,6 @@ const clothFunction = plane(restDistance * xSegs, restDistance * ySegs);
 
 class Particle {
   constructor(x, y, z, mass) {
-    void z;
-
     this.position = clothFunction(x, y); // position
     this.previous = clothFunction(x, y); // previous
     this.original = clothFunction(x, y);
@@ -49,7 +47,7 @@ class Particle {
   // Force -> Acceleration
   addForce(force) {
     this.a.add(
-      this.tmp2.copy(force).multiplyScalar(this.invMass)
+      this.tmp2.copy(force).multiplyScalar(this.invMass),
     );
   }
 
@@ -68,9 +66,6 @@ class Particle {
 }
 
 class Cloth {
-  static clothFunction = clothFunction;
-  static MASS = MASS;
-
   constructor(w = 10, h = 10) {
     this.w = w;
     this.h = h;
@@ -82,22 +77,22 @@ class Cloth {
     let v;
 
     // Create particles
-    for (v = 0; v <= h; v++) {
-      for (u = 0; u <= w; u++) {
+    for (v = 0; v <= h; v += 1) {
+      for (u = 0; u <= w; u += 1) {
         particles.push(
-          new Particle(u / w, v / h, 0, MASS)
+          new Particle(u / w, v / h, 0, MASS),
         );
       }
     }
 
     function index(indexU, indexV) {
-      return indexU + indexV * (w + 1);
+      return indexU + (indexV * (w + 1));
     }
 
     // Structural
 
-    for (v = 0; v < h; v++) {
-      for (u = 0; u < w; u++) {
+    for (v = 0; v < h; v += 1) {
+      for (u = 0; u < w; u += 1) {
         constrains.push([
           particles[index(u, v)],
           particles[index(u, v + 1)],
@@ -112,7 +107,7 @@ class Cloth {
       }
     }
 
-    for (u = w, v = 0; v < h; v++) {
+    for (u = w, v = 0; v < h; v += 1) {
       constrains.push([
         particles[index(u, v)],
         particles[index(u, v + 1)],
@@ -120,7 +115,7 @@ class Cloth {
       ]);
     }
 
-    for (v = h, u = 0; u < w; u++) {
+    for (v = h, u = 0; u < w; u += 1) {
       constrains.push([
         particles[index(u, v)],
         particles[index(u + 1, v)],
@@ -135,5 +130,7 @@ class Cloth {
     this.index = index;
   }
 }
+Cloth.clothFunction = clothFunction;
+Cloth.MASS = MASS;
 
 export default Cloth;

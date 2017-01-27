@@ -27,7 +27,7 @@ function satisfyConstrains(p1, p2, distance) {
   diff.subVectors(p2.position, p1.position);
   const currentDist = diff.length();
   if (currentDist === 0) return; // prevents division by 0
-  const correction = diff.multiplyScalar(1 - distance / currentDist);
+  const correction = diff.multiplyScalar(1 - (distance / currentDist));
   const correctionHalf = correction.multiplyScalar(0.5);
   p1.position.add(correctionHalf);
   p2.position.sub(correctionHalf);
@@ -147,7 +147,7 @@ export default pure(compose(
       }
 
       // Force du vent
-      const windStrength = Math.cos(time / 7000) * 20 + 40;
+      const windStrength = (Math.cos(time / 7000) * 20) + 40;
       setWindForce(new THREE.Vector3(
         Math.sin(time / 2000),
         Math.cos(time / 3000),
