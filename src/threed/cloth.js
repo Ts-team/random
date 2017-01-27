@@ -127,6 +127,15 @@ export default pure(compose(
         constrain = constrains[i];
         satisfyConstrains(constrain[0], constrain[1], constrain[2]);
       }
+
+      // Pin constrains
+      const pins = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      for (let i = pins.length - 1; i >= 0; i -= 1) {
+        const xy = pins[i];
+        const p = particles[xy];
+        p.position.copy(p.original);
+        p.previous.copy(p.original);
+      }
     },
   }),
   withHandlers({
