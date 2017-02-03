@@ -20,7 +20,7 @@ const blackDots = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QD0RXhpZg
 export const Part = compose(
   onlyUpdateForPropTypes,
   setPropTypes({
-    geometry: PropTypes.object.isRequired,
+    geometry: PropTypes.string.isRequired,
     height: PropTypes.number.isRequired,
     isTextured: PropTypes.bool,
     position: PropTypes.object.isRequired,
@@ -49,14 +49,17 @@ export const Part = compose(
       receiveShadow: true,
       rotation: new THREE.Euler(rotation.x, rotation.y, rotation.z),
     },
-      $(geometry, {
+      geometry !== 'boxGeometry' ? null : $(geometry, {
         depth: 0.6,
         height,
+        width: 0.02,
+      }),
+      geometry !== 'cylinderGeometry' ? null : $(geometry, {
         radiusBottom,
         radiusTop,
         thetaLength,
         thetaStart,
-        width: 0.02,
+        height,
       }),
       $('meshLambertMaterial',
         {
@@ -86,7 +89,6 @@ export const Part = compose(
 
 
 export default compose(
-  withState('ambientLightColor', 'setAmbientLightColor', 0xffface),
   withState('directionalLightPosition', 'setDirectionalLightPosition', new THREE.Vector3(5, 10, 7).multiplyScalar(1.3)),
   withState('cameraPosition', 'setCameraPosition', new THREE.Vector3(-3, 2, 6)),
   withState('fog', 'setFog', new THREE.Fog(0xcce0ff, 200, 200)),
@@ -106,34 +108,8 @@ export default compose(
       ));
     },
   }),
-  // lifecycle({
-  //   componentDidMount() {
-  //     // Create meshes from JSON
-  //     const meshes = [];
-
-  //     const parsedModel = new ParsedModel();
-  //     parsedModel.load('test.dae')
-  //     .then(() => {
-  //       parsedModel.geometries.forEach((geometry, uuid) => {
-  //         const material = parsedModel.materialsArray[parsedModel.materialIndices.get(uuid)];
-  //         meshes.push(
-  //           $('mesh', { key: uuid },
-  //             $('geometry', {
-  //               vertices: geometry.vertices,
-  //               faces: geometry.faces,
-  //             }),
-  //             createMaterial(material),
-  //           ),
-  //         );
-  //       });
-  //       this.props.setMeshes(meshes);
-  //       console.log('meshes', meshes)
-  //     });
-  //   },
-  // }),
 )((props) => {
   const {
-    ambientLightColor,
     cameraPosition,
     directionalLightPosition,
     fog,
@@ -151,7 +127,7 @@ export default compose(
       onAnimate,
       pixelRatio: window.devicePixelRatio,
       shadowMapEnabled: true,
-      // shadowMapType: THREE.PCFSoftShadowMap,
+      shadowMapType: THREE.PCFSoftShadowMap,
       width,
     },
       $('scene',
@@ -178,10 +154,10 @@ export default compose(
             lookAt: scenePosition,
             position: cameraPosition,
           }),
-          $('ambientLight', { color: ambientLightColor }),
+          $('ambientLight', { color: 0xFCE4EC }),
           $('directionalLight', {
             castShadow: true,
-            color: 0xdfebff,
+            color: 0xffffff,
             position: directionalLightPosition,
             lookAt: scenePosition,
             shadowCameraRight: 5,
